@@ -17,8 +17,8 @@ By 1llusion
 """
 class VideoExtraction:
     def start(self, video):
-        self.extract(video)
-        self.identifyHuman("frames")
+        fps = self.extract(video)
+        self.identifyHuman("frames", fps=fps)
 
     """
     Extracts frames from videos
@@ -26,6 +26,7 @@ class VideoExtraction:
     @staticmethod
     def extract(video):
         vidcap = cv2.VideoCapture(video)
+        fps = vidcap.get(cv2.CAP_PROP_FPS)
 
         success = True  # Frame read
         count = 0   # Number of frames read
@@ -39,6 +40,7 @@ class VideoExtraction:
                 cv2.imwrite("frames/%d.jpg" % count, image)
             count += 1
 
+        return fps
     """
     Detect all images with humans present and move them from inputFolder to outputFolder
     
@@ -49,7 +51,7 @@ class VideoExtraction:
     
     Credit: https://stackabuse.com/object-detection-with-imageai-in-python/
     """
-    def identifyHuman(self, inputFolder, outputFolder="./humans/", tempFolder="./temp/", probability=30, modelPath="./models/yolo.h5"):
+    def identifyHuman(self, inputFolder, outputFolder="./humans/", tempFolder="./temp/", fps=24, probability=30, modelPath="./models/yolo.h5"):
         path = Path(inputFolder)   # To keep path structures tidy
 
         detector = ObjectDetection()
@@ -110,5 +112,5 @@ Example of how to run the class. Just enter a path of a video to be processed an
 """
 if __name__ == "__main__":
     vid = VideoExtraction()
-    vid.start("Enter path to video here")
+    vid.start("Enter video link here")
     print("Done")
